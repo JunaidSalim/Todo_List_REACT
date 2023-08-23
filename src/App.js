@@ -1,24 +1,48 @@
-import logo from './logo.svg';
-import './App.css';
+import "./App.css";
+import Header from "./Components/Header";
+import Todo from "./Components/Todo";
+// import Footer from "./Components/Footer";
+import Add from "./Components/Add";
+import React, { useState, useEffect } from "react";
+import { Routes, Route } from "react-router-dom";
 
 function App() {
+  let inittask;
+
+  if (localStorage.getItem("task") === null) {
+    inittask = [];
+  } else {
+    inittask = JSON.parse(localStorage.getItem("task"));
+  }
+  const onDelete = (tasks) => {
+    settask(
+      task.filter((e) => {
+        return e !== tasks;
+      })
+    );
+  };
+  const AddTask = (tit, desc) => {
+    const nextTask = {
+      no: task.length !== 0 ? task.length - 1 : 0,
+      title: tit,
+      description: desc,
+    };
+    settask([...task, nextTask]);
+  };
+
+  const [task, settask] = useState(inittask);
+  useEffect(() => {
+    localStorage.setItem("task", JSON.stringify(task));
+  }, [task]);
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <>
+      <Header />
+      <Routes>
+        <Route path="/" element={<Todo tasks={task} onDelete={onDelete} />} />
+        <Route path="/add" element={<Add add={AddTask} />} />
+      </Routes>
+    </>
   );
 }
 
